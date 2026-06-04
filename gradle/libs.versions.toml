@@ -16,6 +16,7 @@ kotlin-wrappers = "2026.5.3"
 kotlinx-serialization = "1.8.0"
 ktor = "3.0.3"
 koin = "4.0.0"
+buildkonfig = "0.21.2"
 material3 = "1.11.0-alpha07"
 
 [libraries]
@@ -57,3 +58,4 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMul
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+buildkonfigPlugin = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }

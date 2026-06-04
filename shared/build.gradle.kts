@@ -1,5 +1,12 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val env = Properties()
+rootProject.file("env/config.env")
+    .takeIf { it.exists() }?.reader()?.use { env.load(it) }
+rootProject.file("env/config-dev.env")
+    .takeIf { it.exists() }?.reader()?.use { env.load(it) }
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +14,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildkonfigPlugin)
 }
 
 kotlin {
@@ -74,4 +82,22 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+buildkonfig {
+    packageName = "hu.bozgab.megaclient"
+
+    defaultConfigs {
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "BACKEND_HOST",
+            env.getProperty("BACKEND_HOST")
+        )
+
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "BACKEND_PORT",
+            env.getProperty("BACKEND_PORT")
+        )
+    }
 }

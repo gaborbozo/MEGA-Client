@@ -12,7 +12,9 @@ class UserStorage(private val userRepository: UserRepository) {
 
     suspend fun login(username: String, password: String): Result<Unit> =
         userRepository.login(username, password)
-            .onSuccess { response -> user = User(response.id, response.name) }
+            .onSuccess { response ->
+                user = User(response.userId, username, response.token, response.expiration)
+            }
             .map { }
 
     fun logout() {

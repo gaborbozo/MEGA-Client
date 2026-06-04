@@ -1,5 +1,8 @@
 package hu.bozgab.megaclient.util
 
+import hu.bozgab.megaclient.BuildKonfig
+
 object HttpUtil {
-    const val BASE_URL = "http://192.168.1.2:8080"
+    val HOST = BuildKonfig.BACKEND_HOST
+    val PORT = BuildKonfig.BACKEND_PORT
 }
