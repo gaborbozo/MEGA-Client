@@ -10,15 +10,19 @@ import kotlinx.coroutines.launch
 
 class SettingsModel(private val userStorage: UserStorage) {
 
+    private val scope = CoroutineScope(Dispatchers.Main)
+
+    var isLoading by mutableStateOf(false)
+        private set
+    var error by mutableStateOf<String?>(null)
+        private set
+
+    // Main
     var username by mutableStateOf("")
     var password by mutableStateOf("")
-    var error by mutableStateOf<String?>(null)
-    var isLoading by mutableStateOf(false)
 
     val canLogin: Boolean
         get() = username.isNotBlank() && password.isNotBlank() && !isLoading
-
-    private val scope = CoroutineScope(Dispatchers.Main)
 
     fun login() {
         isLoading = true

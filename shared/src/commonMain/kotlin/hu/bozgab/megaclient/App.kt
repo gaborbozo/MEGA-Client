@@ -19,6 +19,7 @@ import hu.bozgab.megaclient.di.appModule
 import hu.bozgab.megaclient.model.state.Screen
 import hu.bozgab.megaclient.service.UserStorage
 import hu.bozgab.megaclient.ui.HomeScreen
+import hu.bozgab.megaclient.ui.NoteScreen
 import hu.bozgab.megaclient.ui.SettingsScreen
 import hu.bozgab.megaclient.ui.ShoppingListScreen
 import org.koin.compose.KoinApplication
@@ -75,6 +76,7 @@ fun AppContent(userStorage: UserStorage = koinInject()) {
                     when (selectedScreen) {
                         Screen.Home -> HomeScreen()
                         Screen.ShoppingList -> ShoppingListScreen()
+                        Screen.Note -> NoteScreen()
                         Screen.Settings -> SettingsScreen()
                     }
                 }
