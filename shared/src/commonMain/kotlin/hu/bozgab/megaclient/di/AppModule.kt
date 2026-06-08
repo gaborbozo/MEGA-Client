@@ -1,5 +1,6 @@
 package hu.bozgab.megaclient.di
 
+import hu.bozgab.megaclient.api.AuthenticationApi
 import hu.bozgab.megaclient.api.NoteApi
 import hu.bozgab.megaclient.api.UserApi
 import hu.bozgab.megaclient.config.createHttpClient
@@ -13,14 +14,15 @@ import org.koin.dsl.module
 val appModule = module {
     single { createHttpClient { get<UserStorage>().user?.token } }
 
+    single { AuthenticationApi(get()) }
     single { UserApi(get()) }
     single { NoteApi(get()) }
 
-    single { UserRepository(get()) }
+    single { UserRepository(get(), get()) }
     single { NoteRepository(get()) }
 
     single { UserStorage(get()) }
 
     single { SettingsModel(get()) }
-    single { NoteModel(get()) }
+    single { NoteModel(get(), get()) }
 }

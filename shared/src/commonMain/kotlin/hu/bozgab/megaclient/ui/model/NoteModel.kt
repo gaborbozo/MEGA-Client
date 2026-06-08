@@ -4,13 +4,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import hu.bozgab.megaclient.model.NoteDTO
+import hu.bozgab.megaclient.model.Note
 import hu.bozgab.megaclient.repository.NoteRepository
+import hu.bozgab.megaclient.service.UserStorage
+import hu.bozgab.megaclient.util.AppColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class NoteModel(private val noteRepository: NoteRepository) {
+class NoteModel(
+    private val noteRepository: NoteRepository,
+    private val userStorage: UserStorage
+) {
 
     private val scope = CoroutineScope(Dispatchers.Main)
 
@@ -20,12 +25,13 @@ class NoteModel(private val noteRepository: NoteRepository) {
         private set
 
     // Main
-    var notes = mutableStateListOf<NoteDTO>()
+    var notes = mutableStateListOf<Note>()
         private set
 
     // State for editing
     var editingNoteId by mutableStateOf<Long?>(null)
     var editingText by mutableStateOf("")
+    var editingColor by mutableStateOf(userStorage.user?.theme ?: AppColors.DEFAULT_COLOR_NAME)
     var isCreatingNew by mutableStateOf(false)
 
     // Unsaved changes dialog
@@ -35,9 +41,10 @@ class NoteModel(private val noteRepository: NoteRepository) {
     val hasUnsavedChanges: Boolean
         get() {
             if (editingNoteId == null) return false
-            if (isCreatingNew) return editingText.isNotBlank()
+            if (isCreatingNew) return editingText.isNotBlank() || editingColor != (userStorage.user?.theme
+                ?: AppColors.DEFAULT_COLOR_NAME)
             val originalNote = notes.find { it.id == editingNoteId }
-            return originalNote?.note != editingText
+            return originalNote?.note != editingText || originalNote.color != editingColor
         }
 
     init {
@@ -49,7 +56,7 @@ class NoteModel(private val noteRepository: NoteRepository) {
         scope.launch {
             noteRepository.getAllNotes().onSuccess {
                 notes.clear()
-                notes.addAll(it)
+                notes.addAll(it.sortedByDescending { note -> note.updatedAt ?: note.createdAt })
                 isLoading = false
             }.onFailure {
                 error = it.message
@@ -62,6 +69,7 @@ class NoteModel(private val noteRepository: NoteRepository) {
         val doCreate = {
             editingNoteId = -1L
             editingText = ""
+            editingColor = userStorage.user?.theme ?: AppColors.DEFAULT_COLOR_NAME
             isCreatingNew = true
         }
 
@@ -73,10 +81,11 @@ class NoteModel(private val noteRepository: NoteRepository) {
         }
     }
 
-    fun edit(note: NoteDTO) {
+    fun edit(note: Note) {
         val doEdit = {
             editingNoteId = note.id
             editingText = note.note
+            editingColor = note.color
             isCreatingNew = false
         }
 
@@ -91,6 +100,7 @@ class NoteModel(private val noteRepository: NoteRepository) {
     fun cancelEdit() {
         editingNoteId = null
         editingText = ""
+        editingColor = userStorage.user?.theme ?: AppColors.DEFAULT_COLOR_NAME
         isCreatingNew = false
     }
 
@@ -99,8 +109,8 @@ class NoteModel(private val noteRepository: NoteRepository) {
         isLoading = true
         scope.launch {
             if (isCreatingNew) {
-                noteRepository.createNote(editingText).onSuccess {
-                    notes.add(it)
+                noteRepository.createNote(editingText, editingColor).onSuccess {
+                    notes.add(0, it)
                     cancelEdit()
                     isLoading = false
                 }.onFailure {
@@ -108,10 +118,14 @@ class NoteModel(private val noteRepository: NoteRepository) {
                     isLoading = false
                 }
             } else {
-                noteRepository.updateNote(id, editingText).onSuccess { updated ->
+                noteRepository.updateNote(id, editingText, editingColor).onSuccess { updated ->
                     val index = notes.indexOfFirst { it.id == id }
                     if (index != -1) {
                         notes[index] = updated
+
+                        val sortedList = notes.sortedByDescending { it.updatedAt }
+                        notes.clear()
+                        notes.addAll(sortedList)
                     }
                     cancelEdit()
                     isLoading = false

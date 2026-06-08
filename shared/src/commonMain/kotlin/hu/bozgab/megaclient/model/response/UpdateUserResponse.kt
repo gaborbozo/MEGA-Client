@@ -4,9 +4,6 @@ import hu.bozgab.megaclient.util.AppColors
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AuthNResponse(
-    val userId: Long,
-    val token: String,
-    val expiration: Long,
+data class UpdateUserResponse(
     val theme: String? = AppColors.DEFAULT_COLOR_NAME
 )

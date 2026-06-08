@@ -41,4 +41,17 @@ class SettingsModel(private val userStorage: UserStorage) {
     fun logout() {
         userStorage.logout()
     }
+
+    fun updateTheme(theme: String) {
+        isLoading = true
+        error = null
+        scope.launch {
+            userStorage.updateTheme(theme).onSuccess {
+                isLoading = false
+            }.onFailure {
+                error = it.message ?: "Update theme failed"
+                isLoading = false
+            }
+        }
+    }
 }

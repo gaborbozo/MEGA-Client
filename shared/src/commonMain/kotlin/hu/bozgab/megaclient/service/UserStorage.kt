@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import hu.bozgab.megaclient.model.User
+import hu.bozgab.megaclient.model.request.UpdateUserRequest
 import hu.bozgab.megaclient.repository.UserRepository
+import hu.bozgab.megaclient.util.AppColors
 
 class UserStorage(private val userRepository: UserRepository) {
     var user by mutableStateOf<User?>(null)
@@ -13,7 +15,20 @@ class UserStorage(private val userRepository: UserRepository) {
     suspend fun login(username: String, password: String): Result<Unit> =
         userRepository.login(username, password)
             .onSuccess { response ->
-                user = User(response.userId, username, response.token, response.expiration)
+                user = User(
+                    id = response.userId,
+                    name = username,
+                    token = response.token,
+                    expiration = response.expiration,
+                    theme = response.theme ?: AppColors.DEFAULT_COLOR_NAME
+                )
+            }
+            .map { }
+
+    suspend fun updateTheme(theme: String): Result<Unit> =
+        userRepository.updateUser(UpdateUserRequest(theme = theme))
+            .onSuccess { response ->
+                user = user?.copy(theme = response.theme ?: AppColors.DEFAULT_COLOR_NAME)
             }
             .map { }
 
