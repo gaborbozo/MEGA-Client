@@ -7,15 +7,16 @@ import hu.bozgab.megaclient.model.request.UpdateNoteRequest
 
 class NoteRepository(private val noteApi: NoteApi) {
 
-    suspend fun getAllNotes(): Result<List<Note>> =
-        runCatching { noteApi.getAllNotes() }
+    suspend fun getAll(): Result<List<Note>> =
+        runCatching { noteApi.getAll() }
 
-    suspend fun createNote(note: String, color: String?): Result<Note> =
-        runCatching { noteApi.createNote(CreateNoteRequest(note, color)) }
+    suspend fun create(note: String, color: String?): Result<Note> =
+        runCatching { noteApi.create(CreateNoteRequest(note, color)) }
 
-    suspend fun updateNote(id: Long, note: String?, color: String?): Result<Note> =
-        runCatching { noteApi.updateNote(id, UpdateNoteRequest(note, color)) }
+    suspend fun update(id: Long, note: String?, color: String?): Result<Note> =
+        runCatching { noteApi.update(id, UpdateNoteRequest(note, color)) }
 
-    suspend fun deleteNote(id: Long): Result<Unit> =
-        runCatching { noteApi.deleteNote(id) }
+    suspend fun delete(id: Long): Result<Unit> =
+        runCatching { noteApi.delete(id) }
+
 }

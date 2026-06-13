@@ -1,7 +1,7 @@
 package hu.bozgab.megaclient.api
 
 import hu.bozgab.megaclient.model.request.UpdateUserRequest
-import hu.bozgab.megaclient.model.response.UpdateUserResponse
+import hu.bozgab.megaclient.model.request.UpdateUserResponse
 import hu.bozgab.megaclient.util.HttpUtil
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -17,7 +17,7 @@ class UserApi(private val client: HttpClient) {
         private val url = "${HttpUtil.HOST}:${HttpUtil.PORT}${subPath}"
     }
 
-    suspend fun updateUser(request: UpdateUserRequest): UpdateUserResponse =
+    suspend fun update(request: UpdateUserRequest): UpdateUserResponse =
         client.patch(url) {
             contentType(ContentType.Application.Json)
             setBody(request)

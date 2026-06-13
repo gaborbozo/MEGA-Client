@@ -1,7 +1,13 @@
-package hu.bozgab.megaclient.model.response
+package hu.bozgab.megaclient.model.request
 
 import hu.bozgab.megaclient.util.AppColors
 import kotlinx.serialization.Serializable
+
+@Serializable
+data class LoginRequest(
+    val username: String,
+    val password: String
+)
 
 @Serializable
 data class AuthNResponse(

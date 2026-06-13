@@ -11,14 +11,25 @@ object AppColors {
     const val DEFAULT_COLOR_NAME = "grey"
 
     val colors = mapOf(
-        "grey" to AppColor(Color(0xFFEEEEEE), Color(0xFFF5F5F5)),
-        "red" to AppColor(Color(0xFFFFCDD2), Color(0xFFFFEBEE)),
-        "green" to AppColor(Color(0xFFC8E6C9), Color(0xFFE8F5E9)),
-        "blue" to AppColor(Color(0xFFBBDEFB), Color(0xFFE3F2FD)),
-        "brown" to AppColor(Color(0xFFD7CCC8), Color(0xFFEFEBE9)),
-        "orange" to AppColor(Color(0xFFFFE0B2), Color(0xFFFFF3E0)),
-        "yellow" to AppColor(Color(0xFFFFF9C4), Color(0xFFFFFDE7)),
-        "pink" to AppColor(Color(0xFFF8BBD0), Color(0xFFFCE4EC))
+        "grey" to AppColor(
+            primary = Color(0xFF9E9E9E),
+            secondary = Color(0xFFF5F5F5)
+        ),
+
+        "black" to AppColor(
+            primary = Color(0xFF121212),
+            secondary = Color(0xFF2C2C2C)
+        ),
+
+        "brown" to AppColor(
+            primary = Color(0xFF6D4C41),
+            secondary = Color(0xFFEFEBE9)
+        ),
+
+        "pink" to AppColor(
+            primary = Color(0xFFC2185B),
+            secondary = Color(0xFFFCE4EC)
+        )
     )
 
     fun getColor(name: String?): AppColor =

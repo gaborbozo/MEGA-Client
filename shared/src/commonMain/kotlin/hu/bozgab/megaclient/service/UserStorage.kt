@@ -26,7 +26,7 @@ class UserStorage(private val userRepository: UserRepository) {
             .map { }
 
     suspend fun updateTheme(theme: String): Result<Unit> =
-        userRepository.updateUser(UpdateUserRequest(theme = theme))
+        userRepository.update(UpdateUserRequest(theme = theme))
             .onSuccess { response ->
                 user = user?.copy(theme = response.theme ?: AppColors.DEFAULT_COLOR_NAME)
             }

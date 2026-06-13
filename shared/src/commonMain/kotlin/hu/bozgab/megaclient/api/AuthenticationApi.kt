@@ -1,7 +1,7 @@
 package hu.bozgab.megaclient.api
 
+import hu.bozgab.megaclient.model.request.AuthNResponse
 import hu.bozgab.megaclient.model.request.LoginRequest
-import hu.bozgab.megaclient.model.response.AuthNResponse
 import hu.bozgab.megaclient.util.HttpUtil
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

@@ -54,7 +54,7 @@ class NoteModel(
     fun loadNotes() {
         isLoading = true
         scope.launch {
-            noteRepository.getAllNotes().onSuccess {
+            noteRepository.getAll().onSuccess {
                 notes.clear()
                 notes.addAll(it.sortedByDescending { note -> note.updatedAt ?: note.createdAt })
                 isLoading = false
@@ -109,7 +109,7 @@ class NoteModel(
         isLoading = true
         scope.launch {
             if (isCreatingNew) {
-                noteRepository.createNote(editingText, editingColor).onSuccess {
+                noteRepository.create(editingText, editingColor).onSuccess {
                     notes.add(0, it)
                     cancelEdit()
                     isLoading = false
@@ -118,7 +118,7 @@ class NoteModel(
                     isLoading = false
                 }
             } else {
-                noteRepository.updateNote(id, editingText, editingColor).onSuccess { updated ->
+                noteRepository.update(id, editingText, editingColor).onSuccess { updated ->
                     val index = notes.indexOfFirst { it.id == id }
                     if (index != -1) {
                         notes[index] = updated
@@ -140,7 +140,7 @@ class NoteModel(
     fun delete(id: Long) {
         isLoading = true
         scope.launch {
-            noteRepository.deleteNote(id).onSuccess {
+            noteRepository.delete(id).onSuccess {
                 notes.removeAll { it.id == id }
                 isLoading = false
             }.onFailure {
