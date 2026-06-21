@@ -23,6 +23,7 @@ import hu.bozgab.megaclient.model.state.Screen
 import hu.bozgab.megaclient.service.UserStorage
 import hu.bozgab.megaclient.ui.HomeScreen
 import hu.bozgab.megaclient.ui.NoteScreen
+import hu.bozgab.megaclient.ui.NotificationOverlay
 import hu.bozgab.megaclient.ui.SettingsScreen
 import hu.bozgab.megaclient.ui.ShoppingListScreen
 import hu.bozgab.megaclient.util.AppColors
@@ -95,6 +96,7 @@ fun AppContent(userStorage: UserStorage = koinInject()) {
                         Screen.Settings -> SettingsScreen()
                     }
                 }
+                NotificationOverlay()
             }
         }
     }

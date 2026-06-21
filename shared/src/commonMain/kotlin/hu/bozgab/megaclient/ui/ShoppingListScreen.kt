@@ -182,15 +182,6 @@ fun ShoppingListScreen(
                 }
             )
         }
-
-        model.error?.let {
-            Snackbar(
-                modifier = Modifier.padding(16.dp).padding(bottom = 64.dp),
-                action = {
-                    TextButton(onClick = { model.loadItems() }) { Text("Újra") }
-                }
-            ) { Text(it) }
-        }
     }
 }
 

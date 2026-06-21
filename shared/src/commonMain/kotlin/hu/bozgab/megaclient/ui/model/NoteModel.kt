@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import hu.bozgab.megaclient.model.Note
 import hu.bozgab.megaclient.repository.NoteRepository
+import hu.bozgab.megaclient.service.NotificationService
 import hu.bozgab.megaclient.service.UserStorage
 import hu.bozgab.megaclient.util.AppColors
 import kotlinx.coroutines.CoroutineScope
@@ -14,14 +15,13 @@ import kotlinx.coroutines.launch
 
 class NoteModel(
     private val noteRepository: NoteRepository,
-    private val userStorage: UserStorage
+    private val userStorage: UserStorage,
+    private val notificationService: NotificationService
 ) {
 
     private val scope = CoroutineScope(Dispatchers.Main)
 
     var isLoading by mutableStateOf(false)
-        private set
-    var error by mutableStateOf<String?>(null)
         private set
 
     // Main
@@ -59,7 +59,7 @@ class NoteModel(
                 notes.addAll(it.sortedByDescending { note -> note.updatedAt ?: note.createdAt })
                 isLoading = false
             }.onFailure {
-                error = it.message
+                notificationService.showError(it.message ?: "Failed to load notes")
                 isLoading = false
             }
         }
@@ -113,8 +113,9 @@ class NoteModel(
                     notes.add(0, it)
                     cancelEdit()
                     isLoading = false
+                    notificationService.showSuccess("Note created")
                 }.onFailure {
-                    error = it.message
+                    notificationService.showError(it.message ?: "Failed to create note")
                     isLoading = false
                 }
             } else {
@@ -129,8 +130,9 @@ class NoteModel(
                     }
                     cancelEdit()
                     isLoading = false
+                    notificationService.showSuccess("Note updated")
                 }.onFailure {
-                    error = it.message
+                    notificationService.showError(it.message ?: "Failed to update note")
                     isLoading = false
                 }
             }
@@ -143,8 +145,9 @@ class NoteModel(
             noteRepository.delete(id).onSuccess {
                 notes.removeAll { it.id == id }
                 isLoading = false
+                notificationService.showSuccess("Note deleted")
             }.onFailure {
-                error = it.message
+                notificationService.showError(it.message ?: "Failed to delete note")
                 isLoading = false
             }
         }

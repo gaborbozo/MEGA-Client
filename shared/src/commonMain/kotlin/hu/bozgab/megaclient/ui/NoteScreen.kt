@@ -177,15 +177,6 @@ fun NoteScreen(
                     }
                 )
             }
-
-            model.error?.let {
-                Snackbar(
-                    modifier = Modifier.padding(16.dp).align(Alignment.BottomCenter),
-                    action = {
-                        TextButton(onClick = { model.loadNotes() }) { Text("Újra") }
-                    }
-                ) { Text(it) }
-            }
         }
     }
 }

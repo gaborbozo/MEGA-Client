@@ -8,6 +8,7 @@ import hu.bozgab.megaclient.config.createHttpClient
 import hu.bozgab.megaclient.repository.NoteRepository
 import hu.bozgab.megaclient.repository.ShoppingListRepository
 import hu.bozgab.megaclient.repository.UserRepository
+import hu.bozgab.megaclient.service.NotificationService
 import hu.bozgab.megaclient.service.UserStorage
 import hu.bozgab.megaclient.ui.model.NoteModel
 import hu.bozgab.megaclient.ui.model.SettingsModel
@@ -26,9 +27,10 @@ val appModule = module {
     single { NoteRepository(get()) }
     single { ShoppingListRepository(get()) }
 
+    single { NotificationService() }
     single { UserStorage(get()) }
 
-    single { SettingsModel(get()) }
-    single { NoteModel(get(), get()) }
-    single { ShoppingListModel(get()) }
+    single { SettingsModel(get(), get()) }
+    single { NoteModel(get(), get(), get()) }
+    single { ShoppingListModel(get(), get()) }
 }

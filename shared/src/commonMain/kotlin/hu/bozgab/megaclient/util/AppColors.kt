@@ -38,4 +38,11 @@ object AppColors {
     fun getPrimary(name: String?): Color = getColor(name).primary
 
     fun getSecondary(name: String?): Color = getColor(name).secondary
+
+    val notificationColors = mapOf(
+        "INFO" to Color(0xFF2196F3),
+        "ERROR" to Color(0xFFF44336),
+        "SUCCESS" to Color(0xFF4CAF50),
+        "WARNING" to Color(0xFFFF9800)
+    )
 }

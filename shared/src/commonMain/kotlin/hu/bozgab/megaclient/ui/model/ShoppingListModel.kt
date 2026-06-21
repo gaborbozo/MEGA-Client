@@ -6,20 +6,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import hu.bozgab.megaclient.model.ShoppingItem
 import hu.bozgab.megaclient.repository.ShoppingListRepository
+import hu.bozgab.megaclient.service.NotificationService
 import hu.bozgab.megaclient.util.YearWeek
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ShoppingListModel(
-    private val repository: ShoppingListRepository
+    private val repository: ShoppingListRepository,
+    private val notificationService: NotificationService
 ) {
 
     private val scope = CoroutineScope(Dispatchers.Main)
 
     var isLoading by mutableStateOf(false)
-        private set
-    var error by mutableStateOf<String?>(null)
         private set
 
     // Main
@@ -45,7 +45,7 @@ class ShoppingListModel(
                 items.addAll(it)
                 isLoading = false
             }.onFailure {
-                error = it.message
+                notificationService.showError(it.message ?: "Failed to load shopping list")
                 isLoading = false
             }
         }
@@ -84,8 +84,9 @@ class ShoppingListModel(
                 items.add(it)
                 cancelCreate()
                 isLoading = false
+                notificationService.showSuccess("Item added")
             }.onFailure {
-                error = it.message
+                notificationService.showError(it.message ?: "Failed to add item")
                 isLoading = false
             }
         }
@@ -107,8 +108,9 @@ class ShoppingListModel(
                 items.removeAll { it.id == id }
                 itemToDeleteId = null
                 isLoading = false
+                notificationService.showSuccess("Item deleted")
             }.onFailure {
-                error = it.message
+                notificationService.showError(it.message ?: "Failed to delete item")
                 isLoading = false
             }
         }

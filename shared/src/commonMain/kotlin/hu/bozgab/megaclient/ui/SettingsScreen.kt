@@ -88,11 +88,6 @@ fun SettingsScreen(
                     Text("Bejelentkezés")
                 }
             }
-
-            model.error?.let {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(it, color = MaterialTheme.colorScheme.error)
-            }
         } else {
             Text(
                 "Bejelentkezve mint: ${currentUser.name}",

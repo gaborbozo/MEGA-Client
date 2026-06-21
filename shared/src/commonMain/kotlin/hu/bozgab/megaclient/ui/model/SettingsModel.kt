@@ -3,18 +3,20 @@ package hu.bozgab.megaclient.ui.model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import hu.bozgab.megaclient.service.NotificationService
 import hu.bozgab.megaclient.service.UserStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SettingsModel(private val userStorage: UserStorage) {
+class SettingsModel(
+    private val userStorage: UserStorage,
+    private val notificationService: NotificationService
+) {
 
     private val scope = CoroutineScope(Dispatchers.Main)
 
     var isLoading by mutableStateOf(false)
-        private set
-    var error by mutableStateOf<String?>(null)
         private set
 
     // Main
@@ -26,13 +28,13 @@ class SettingsModel(private val userStorage: UserStorage) {
 
     fun login() {
         isLoading = true
-        error = null
         scope.launch {
             val result = userStorage.login(username, password)
             result.onSuccess {
                 isLoading = false
+                notificationService.showSuccess("Login successful")
             }.onFailure {
-                error = it.message ?: "Login failed"
+                notificationService.showError(it.message ?: "Login failed")
                 isLoading = false
             }
         }
@@ -44,12 +46,12 @@ class SettingsModel(private val userStorage: UserStorage) {
 
     fun updateTheme(theme: String) {
         isLoading = true
-        error = null
         scope.launch {
             userStorage.updateTheme(theme).onSuccess {
                 isLoading = false
+                notificationService.showSuccess("Theme updated")
             }.onFailure {
-                error = it.message ?: "Update theme failed"
+                notificationService.showError(it.message ?: "Update theme failed")
                 isLoading = false
             }
         }
