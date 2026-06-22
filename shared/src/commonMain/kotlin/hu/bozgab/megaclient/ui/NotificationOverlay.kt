@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +33,9 @@ import hu.bozgab.megaclient.service.NotificationService
 import hu.bozgab.megaclient.util.AppColors
 import hu.bozgab.megaclient.util.Notification
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.compose.koinInject
 
 @Composable
@@ -44,9 +49,10 @@ fun NotificationOverlay(notificationService: NotificationService = koinInject())
     LaunchedEffect(notificationService.notifications) {
         notificationService.notifications.collect { notification ->
             currentNotification = notification
-            delay(fadeInDuration.toLong())
             isVisible = true
-            delay(notification.durationMillis)
+            withTimeoutOrNull(notification.durationMillis) {
+                snapshotFlow { isVisible }.filter { !it }.first()
+            }
             isVisible = false
             delay(fadeOutDuration.toLong())
             currentNotification = null
@@ -81,6 +87,7 @@ fun NotificationOverlay(notificationService: NotificationService = koinInject())
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
                         .background(backgroundColor)
+                        .clickable { isVisible = false }
                         .padding(16.dp)
                 ) {
                     Text(

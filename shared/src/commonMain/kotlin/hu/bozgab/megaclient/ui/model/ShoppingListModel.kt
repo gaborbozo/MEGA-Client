@@ -45,7 +45,7 @@ class ShoppingListModel(
                 items.addAll(it)
                 isLoading = false
             }.onFailure {
-                notificationService.showError(it.message ?: "Failed to load shopping list")
+                notificationService.showError(it.message ?: "Nem sikerült betölteni a bevásárlólistát")
                 isLoading = false
             }
         }
@@ -84,9 +84,9 @@ class ShoppingListModel(
                 items.add(it)
                 cancelCreate()
                 isLoading = false
-                notificationService.showSuccess("Item added")
+                notificationService.showSuccess("Tétel hozzáadva")
             }.onFailure {
-                notificationService.showError(it.message ?: "Failed to add item")
+                notificationService.showError(it.message ?: "Nem sikerült hozzáadni a tételt")
                 isLoading = false
             }
         }
@@ -108,9 +108,9 @@ class ShoppingListModel(
                 items.removeAll { it.id == id }
                 itemToDeleteId = null
                 isLoading = false
-                notificationService.showSuccess("Item deleted")
+                notificationService.showSuccess("Tétel törölve")
             }.onFailure {
-                notificationService.showError(it.message ?: "Failed to delete item")
+                notificationService.showError(it.message ?: "Nem sikerült törölni a tételt")
                 isLoading = false
             }
         }

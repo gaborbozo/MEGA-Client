@@ -32,9 +32,9 @@ class SettingsModel(
             val result = userStorage.login(username, password)
             result.onSuccess {
                 isLoading = false
-                notificationService.showSuccess("Login successful")
+                notificationService.showSuccess("Sikeres bejelentkezés")
             }.onFailure {
-                notificationService.showError(it.message ?: "Login failed")
+                notificationService.showError(it.message ?: "Sikertelen bejelentkezés")
                 isLoading = false
             }
         }
@@ -49,9 +49,9 @@ class SettingsModel(
         scope.launch {
             userStorage.updateTheme(theme).onSuccess {
                 isLoading = false
-                notificationService.showSuccess("Theme updated")
+                notificationService.showSuccess("Téma frissítve")
             }.onFailure {
-                notificationService.showError(it.message ?: "Update theme failed")
+                notificationService.showError(it.message ?: "Téma frissítése sikertelen")
                 isLoading = false
             }
         }

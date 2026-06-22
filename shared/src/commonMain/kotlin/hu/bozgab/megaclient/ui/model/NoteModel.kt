@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NoteModel(
-    private val noteRepository: NoteRepository,
+    private val repository: NoteRepository,
     private val userStorage: UserStorage,
     private val notificationService: NotificationService
 ) {
@@ -54,12 +54,12 @@ class NoteModel(
     fun loadNotes() {
         isLoading = true
         scope.launch {
-            noteRepository.getAll().onSuccess {
+            repository.getAll().onSuccess {
                 notes.clear()
                 notes.addAll(it.sortedByDescending { note -> note.updatedAt ?: note.createdAt })
                 isLoading = false
             }.onFailure {
-                notificationService.showError(it.message ?: "Failed to load notes")
+                notificationService.showError(it.message ?: "Nem sikerült betölteni a jegyzeteket")
                 isLoading = false
             }
         }
@@ -109,17 +109,19 @@ class NoteModel(
         isLoading = true
         scope.launch {
             if (isCreatingNew) {
-                noteRepository.create(editingText, editingColor).onSuccess {
+                repository.create(editingText, editingColor).onSuccess {
                     notes.add(0, it)
                     cancelEdit()
                     isLoading = false
-                    notificationService.showSuccess("Note created")
+                    notificationService.showSuccess("Jegyzet létrehozva")
                 }.onFailure {
-                    notificationService.showError(it.message ?: "Failed to create note")
+                    notificationService.showError(
+                        it.message ?: "Nem sikerült létrehozni a jegyzetet"
+                    )
                     isLoading = false
                 }
             } else {
-                noteRepository.update(id, editingText, editingColor).onSuccess { updated ->
+                repository.update(id, editingText, editingColor).onSuccess { updated ->
                     val index = notes.indexOfFirst { it.id == id }
                     if (index != -1) {
                         notes[index] = updated
@@ -130,9 +132,11 @@ class NoteModel(
                     }
                     cancelEdit()
                     isLoading = false
-                    notificationService.showSuccess("Note updated")
+                    notificationService.showSuccess("Jegyzet frissítve")
                 }.onFailure {
-                    notificationService.showError(it.message ?: "Failed to update note")
+                    notificationService.showError(
+                        it.message ?: "Nem sikerült frissíteni a jegyzetet"
+                    )
                     isLoading = false
                 }
             }
@@ -142,12 +146,12 @@ class NoteModel(
     fun delete(id: Long) {
         isLoading = true
         scope.launch {
-            noteRepository.delete(id).onSuccess {
+            repository.delete(id).onSuccess {
                 notes.removeAll { it.id == id }
                 isLoading = false
-                notificationService.showSuccess("Note deleted")
+                notificationService.showSuccess("Jegyzet törölve")
             }.onFailure {
-                notificationService.showError(it.message ?: "Failed to delete note")
+                notificationService.showError(it.message ?: "Nem sikerült törölni a jegyzetet")
                 isLoading = false
             }
         }

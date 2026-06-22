@@ -13,6 +13,8 @@ kotlin {
 }
 dependencies {
     implementation(projects.shared)
+    implementation(libs.filekit.core)
+    implementation(libs.filekit.dialogs)
 
     implementation(libs.androidx.activity.compose)
 

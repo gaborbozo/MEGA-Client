@@ -22,6 +22,6 @@ fun HomeScreen(userStorage: UserStorage = koinInject()) {
             .background(if (currentUser != null) AppColors.getPrimary(currentUser.theme) else Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
-        Text("Kezdőlap", style = MaterialTheme.typography.headlineMedium)
+        Text("MEGA", style = MaterialTheme.typography.headlineMedium)
     }
 }

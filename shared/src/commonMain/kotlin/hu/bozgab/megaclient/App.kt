@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import hu.bozgab.megaclient.di.appModule
 import hu.bozgab.megaclient.model.state.Screen
 import hu.bozgab.megaclient.service.UserStorage
+import hu.bozgab.megaclient.ui.GeriScreen
 import hu.bozgab.megaclient.ui.HomeScreen
 import hu.bozgab.megaclient.ui.NoteScreen
 import hu.bozgab.megaclient.ui.NotificationOverlay
@@ -93,6 +94,7 @@ fun AppContent(userStorage: UserStorage = koinInject()) {
                         Screen.Home -> HomeScreen()
                         Screen.ShoppingList -> ShoppingListScreen()
                         Screen.Note -> NoteScreen()
+                        Screen.Geri -> GeriScreen()
                         Screen.Settings -> SettingsScreen()
                     }
                 }
