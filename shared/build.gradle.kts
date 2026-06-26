@@ -7,6 +7,7 @@ rootProject.file("env/config.env")
     .takeIf { it.exists() }?.reader()?.use { env.load(it) }
 rootProject.file("env/config-dev.env")
     .takeIf { it.exists() }?.reader()?.use { env.load(it) }
+System.getenv().forEach { (k, v) -> env.setProperty(k.toString(), v.toString()) }
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
