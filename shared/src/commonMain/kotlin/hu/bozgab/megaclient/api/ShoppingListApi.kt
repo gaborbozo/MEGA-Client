@@ -17,7 +17,7 @@ class ShoppingListApi(private val client: HttpClient) {
 
     companion object {
         private const val subPath = "/api/shopping-list"
-        private val url = "${HttpUtil.HOST}:${HttpUtil.PORT}${subPath}"
+        private val url = HttpUtil.getBaseUrl(subPath)
     }
 
     suspend fun getByYearAndWeek(year: Int, week: Int): List<ShoppingItem> =

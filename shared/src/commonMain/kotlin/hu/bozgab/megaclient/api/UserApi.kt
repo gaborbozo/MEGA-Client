@@ -14,7 +14,7 @@ class UserApi(private val client: HttpClient) {
 
     companion object {
         private const val subPath = "/api/user"
-        private val url = "${HttpUtil.HOST}:${HttpUtil.PORT}${subPath}"
+        private val url = HttpUtil.getBaseUrl(subPath)
     }
 
     suspend fun update(request: UpdateUserRequest): UpdateUserResponse =
