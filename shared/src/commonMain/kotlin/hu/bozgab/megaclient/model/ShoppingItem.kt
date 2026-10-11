@@ -9,4 +9,5 @@ data class ShoppingItem(
     val product: String,
     val createdBy: String,
     val createdAt: Instant,
+    val repeatable: Boolean = false,
 )

@@ -29,9 +29,11 @@ class ShoppingListModel(
 
     // State for creating
     var newProduct by mutableStateOf("")
+    var isRepeatable by mutableStateOf(false)
     var isCreatingNew by mutableStateOf(false)
 
     var itemToDeleteId by mutableStateOf<Long?>(null)
+    var itemToDropRepeatId by mutableStateOf<Long?>(null)
 
     init {
         loadItems()
@@ -69,18 +71,20 @@ class ShoppingListModel(
     fun create() {
         isCreatingNew = true
         newProduct = ""
+        isRepeatable = false
     }
 
     fun cancelCreate() {
         isCreatingNew = false
         newProduct = ""
+        isRepeatable = false
     }
 
     fun save() {
         if (newProduct.isBlank()) return
         isLoading = true
         scope.launch {
-            repository.create(newProduct).onSuccess {
+            repository.create(newProduct, isRepeatable).onSuccess {
                 items.add(it)
                 cancelCreate()
                 isLoading = false
@@ -111,6 +115,33 @@ class ShoppingListModel(
                 notificationService.showSuccess("Tétel törölve")
             }.onFailure {
                 notificationService.showError(it.message ?: "Nem sikerült törölni a tételt")
+                isLoading = false
+            }
+        }
+    }
+
+    fun confirmDropRepeat(id: Long) {
+        itemToDropRepeatId = id
+    }
+
+    fun cancelDropRepeat() {
+        itemToDropRepeatId = null
+    }
+
+    fun dropRepeat() {
+        val id = itemToDropRepeatId ?: return
+        isLoading = true
+        scope.launch {
+            repository.dropRepeat(id).onSuccess {
+                val index = items.indexOfFirst { item -> item.id == id }
+                if (index != -1) {
+                    items[index] = items[index].copy(repeatable = false)
+                }
+                itemToDropRepeatId = null
+                isLoading = false
+                notificationService.showSuccess("Ismétlődés eltávolítva")
+            }.onFailure {
+                notificationService.showError(it.message ?: "Nem sikerült eltávolítani az ismétlődést")
                 isLoading = false
             }
         }
