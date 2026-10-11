@@ -1,5 +1,6 @@
 package hu.bozgab.megaclient.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,15 +20,16 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.SyncDisabled
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -129,7 +131,8 @@ fun ShoppingListScreen(
                         model.items.forEach { item ->
                             ShoppingItemTile(
                                 item = item,
-                                onDelete = { model.confirmDelete(item.id) }
+                                onDelete = { model.confirmDelete(item.id) },
+                                onDropRepeat = { model.confirmDropRepeat(item.id) }
                             )
                         }
                     }
@@ -142,12 +145,31 @@ fun ShoppingListScreen(
                 onDismissRequest = { model.cancelCreate() },
                 title = { Text("Új tétel") },
                 text = {
-                    TextField(
-                        value = model.newProduct,
-                        onValueChange = { model.newProduct = it },
-                        placeholder = { Text("Termék neve") },
-                        singleLine = true
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        TextField(
+                            value = model.newProduct,
+                            onValueChange = { model.newProduct = it },
+                            placeholder = { Text("Termék neve") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { model.isRepeatable = !model.isRepeatable }
+                        ) {
+                            Checkbox(
+                                checked = model.isRepeatable,
+                                onCheckedChange = { model.isRepeatable = it }
+                            )
+                            Text(
+                                text = "Ismétlődő tétel",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
                 },
                 confirmButton = {
                     TextButton(onClick = { model.save() }) {
@@ -182,13 +204,34 @@ fun ShoppingListScreen(
                 }
             )
         }
+
+        if (model.itemToDropRepeatId != null) {
+            AlertDialog(
+                onDismissRequest = { model.cancelDropRepeat() },
+                title = { Text("Ismétlődés eltávolítása") },
+                text = { Text("Biztosan eltávolítod az ismétlődést erről a tételről?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = { model.dropRepeat() }
+                    ) {
+                        Text("Eltávolítás")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { model.cancelDropRepeat() }) {
+                        Text("Mégse")
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun ShoppingItemTile(
     item: ShoppingItem,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onDropRepeat: () -> Unit
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
@@ -205,6 +248,19 @@ fun ShoppingItemTile(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+            if (item.repeatable) {
+                IconButton(
+                    onClick = onDropRepeat,
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        Icons.Default.SyncDisabled,
+                        contentDescription = "Ismétlődés eltávolítása",
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+                }
+            }
             IconButton(
                 onClick = onDelete,
                 modifier = Modifier.size(24.dp)

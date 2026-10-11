@@ -35,4 +35,8 @@ class ShoppingListApi(private val client: HttpClient) {
     suspend fun delete(id: Long) {
         client.delete("${url}/$id")
     }
+
+    suspend fun dropRepeat(id: Long) {
+        client.delete("${url}/$id/repeat")
+    }
 }

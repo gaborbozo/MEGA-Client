@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateShoppingItemRequest(
     val product: String,
+    val repeatable: Boolean = false,
 )
